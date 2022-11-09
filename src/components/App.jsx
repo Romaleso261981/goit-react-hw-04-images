@@ -22,77 +22,42 @@ const App = () => {
   
   useEffect(() => {
     (
-      async function () {
+      async function (prevQuery) {
         try {
-        const { hits, totalHits } = await fetchImages(query, page);
-        const normalHits = hits.map(
-          ({ id, largeImageURL, webformatURL, tags }) => ({
-            id,
-            largeImageURL,
-            webformatURL,
-            tags,
-          })
-        );
-        setTotalHits(totalHits)
-        setArticles([...normalHits])
-        setShowBtn(page <Math.floor(totalHits / 12))
-        setIsLoading(false)
-      } catch (error) {
-        console.log(error);
-      }}
+          setIsLoading(true)
+          const { hits, totalHits } = await fetchImages(query, page);
+          if (!hits.length) {
+            setArticles([...hits])
+            setArticles([])
+            setError(true)
+            return
+          }
+          const normalHits = hits.map(
+            ({ id, largeImageURL, webformatURL, tags }) => ({
+              id,
+              largeImageURL,
+              webformatURL,
+              tags,
+            })
+          );
+          setTotalHits(totalHits)
+          setShowBtn(page < Math.floor(totalHits / 12))
+          setIsLoading(false)
+          if (query === prevQuery) {
+            setArticles([...articles, ...normalHits])
+          } else {
+            setArticles([...hits])
+          }
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false)
+        }
+       }
     )()
     
-  }, [page, query])
+  }, [articles, page, query])
  
-  // async componentDidUpdate(_, prevState) {
-  //   const { query, page } = this.state;
-  //   const { query: prevQuery, page: prevPage } = prevState;
-
-  //   if (query !== prevQuery || page !== prevPage) {
-  //     try {
-  //       this.setState({
-  //         isLoading: true,
-  //       });
-  //       const { hits, totalHits } = await fetchImages(query, page);
-  //       if (!hits.length) {
-  //         this.setState({
-  //           isLoading: false,
-  //           articles: [],
-  //           error: true
-  //         });
-  //         return
-  //       }
-  //       const normalHits = hits.map(
-  //         ({ id, largeImageURL, webformatURL, tags }) => ({
-  //           id,
-  //           largeImageURL,
-  //           webformatURL,
-  //           tags,
-  //         })
-  //       );
-  //     this.setState({
-  //       totalHits: totalHits,
-  //       showBtn: page < Math.floor(totalHits / 12),
-  //       isLoading: false,
-  //     });
-  //       if (query === prevQuery) {
-  //         this.setState({
-  //           articles: [...prevState.articles, ...normalHits],
-  //         });
-  //       } else {
-  //         this.setState({
-  //           articles: [...hits],
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //     } finally {
-  //       this.setState({
-  //         isLoading: false
-  //       });
-  //     }
-  //   }
-  // }
 
   const setQuerys = value => {
     setQuery(value);
