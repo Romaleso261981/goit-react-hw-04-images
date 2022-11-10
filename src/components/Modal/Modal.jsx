@@ -1,38 +1,34 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import { Gallery, Overlay, Img } from './ModalStyle.js';
 
-class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
-    
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  handleKeyDown = event => {
-    if (event.code === 'Escape') {
-      this.props.toggleLargeMode();
-    }
-  };
-
-  handleBackdropClick = event => {
+const Modal = (articles, toggle) => {
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (e.code === 'Escape') {
+        toggle();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [toggle]);
+ 
+ 
+  const handleBackdropClick = event => {
     if (event.currentTarget === event.target) {
-      this.props.toggleLargeMode();
+      toggle();
     }
   };
 
-  render() {
-    const { articles } = this.props;
-    return (
-      <Overlay onClick={this.handleBackdropClick}>
-        <Gallery >
-          <Img src={articles}></Img>
-        </Gallery>
-      </Overlay>
-    );
-  }
+ 
+  return (
+    <Overlay onClick={handleBackdropClick}>
+      <Gallery >
+        <Img src={articles}></Img>
+      </Gallery>
+    </Overlay>
+  );
 }
 
 export default Modal;

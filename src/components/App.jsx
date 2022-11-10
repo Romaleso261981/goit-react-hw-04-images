@@ -14,50 +14,46 @@ const App = () => {
   const [query, setQuery] = useState('');
   const [showLargePic, setShowLargePic] = useState(false);
   const [showBtn, setShowBtn] = useState(false);
-  const [picData, setPicData] = useState({});
+  const [picData, setPicData] = useState(null);
   const [page, setPage] = useState(1);
-  const [totalHits, setTotalHits] = useState(0);
   const [error, setError] = useState(false);
 
-  
   useEffect(() => {
-    (
-      async function (prevQuery) {
-        try {
-          setIsLoading(true)
-          const { hits, totalHits } = await fetchImages(query, page);
-          if (!hits.length) {
-            setArticles([...hits])
-            setArticles([])
-            setError(true)
-            return
-          }
-          const normalHits = hits.map(
-            ({ id, largeImageURL, webformatURL, tags }) => ({
-              id,
-              largeImageURL,
-              webformatURL,
-              tags,
-            })
-          );
-          setTotalHits(totalHits)
-          setShowBtn(page < Math.floor(totalHits / 12))
-          setIsLoading(false)
-          if (query === prevQuery) {
-            setArticles([...articles, ...normalHits])
-          } else {
-            setArticles([...hits])
-          }
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setIsLoading(false)
+    (async function (prevQuery) {
+      try {
+        setShowBtn(false);
+        setIsLoading(true);
+        setError(false);
+        const { hits } = await fetchImages(query, page);
+        if (!hits.length) {
+          setArticles([]);
+          setError(true);
+          return;
         }
-       }
-    )()
-    
-  }, [articles, page, query])
- 
+        const normalHits = hits.map(
+          ({ id, largeImageURL, webformatURL, tags }) => ({
+            id,
+            largeImageURL,
+            webformatURL,
+            tags,
+          })
+        );
+        setIsLoading(false);
+        if (query === prevQuery) {
+          console.log('query === prevQuery');
+          setArticles(prevArticles => [...prevArticles, ...normalHits]);
+          setShowBtn(true);
+        } else {
+          setArticles([...hits]);
+          setShowBtn(true);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [page, query]);
 
   const setQuerys = value => {
     setQuery(value);
@@ -65,13 +61,12 @@ const App = () => {
     setPage(1);
   };
 
-  const toggleLargeMode = picData => {
-    setShowLargePic(!showLargePic)
-    setPicData(picData)
+  const toggleLargeMode = () => {
+    setShowLargePic(false)
   };
 
   const handleLoadMore = () => {
-    setPage(p => ({ page: p.page + 1 }));
+    setPage(prevPage => prevPage + 1);
   };
 
   return (
@@ -90,7 +85,7 @@ const App = () => {
         />
       )}
       {showLargePic && (
-        <Modal articles={picData} toggleLargeMode={toggleLargeMode} />
+        <Modal articles={picData} toggle={toggleLargeMode} />
       )}
     </AppStyled>
   );

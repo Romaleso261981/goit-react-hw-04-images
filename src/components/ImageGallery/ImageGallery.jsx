@@ -7,7 +7,7 @@ const ArticleList = ({ articles, toggleLargeMode }) => (
         key={id}
       >
         <img alt={tags} src={webformatURL} onClick={() => {
-          toggleLargeMode(largeImageURL)
+          toggleLargeMode()
         }}/>
       </ContactItem>
     ))}
