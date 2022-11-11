@@ -1,4 +1,5 @@
-import { Gallery, ContactItem} from './ImageGalleryStyle.js';
+import { Gallery, ContactItem } from './ImageGalleryStyle.js';
+import PropTypes from 'prop-types';
 
 const ArticleList = ({ articles, toggleLargeMode }) => (
   <Gallery>
@@ -7,7 +8,7 @@ const ArticleList = ({ articles, toggleLargeMode }) => (
         key={id}
       >
         <img alt={tags} src={webformatURL} onClick={() => {
-          toggleLargeMode()
+          toggleLargeMode(largeImageURL)
         }}/>
       </ContactItem>
     ))}
@@ -15,3 +16,8 @@ const ArticleList = ({ articles, toggleLargeMode }) => (
 );
 
 export default ArticleList;
+
+ArticleList.propTypes = {
+  articles: PropTypes.string.isRequired,
+  toggleLargeMode: PropTypes.func.isRequired,
+};

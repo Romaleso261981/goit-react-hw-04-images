@@ -40,8 +40,7 @@ const App = () => {
         );
         setIsLoading(false);
         if (query === prevQuery) {
-          console.log('query === prevQuery');
-          setArticles(prevArticles => [...prevArticles, ...normalHits]);
+          setArticles(prevImg => [...prevImg, ...normalHits]);
           setShowBtn(true);
         } else {
           setArticles([...hits]);
@@ -61,8 +60,9 @@ const App = () => {
     setPage(1);
   };
 
-  const toggleLargeMode = () => {
-    setShowLargePic(false)
+  const toggleLargeMode = (data) => {
+    setPicData(data)
+    setShowLargePic(!showLargePic)
   };
 
   const handleLoadMore = () => {
@@ -85,7 +85,7 @@ const App = () => {
         />
       )}
       {showLargePic && (
-        <Modal articles={picData} toggle={toggleLargeMode} />
+        <Modal articles={picData} toggleLargeMode={toggleLargeMode} />
       )}
     </AppStyled>
   );

@@ -1,23 +1,24 @@
 import { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Gallery, Overlay, Img } from './ModalStyle.js';
 
-const Modal = (articles, toggle) => {
+const Modal = ({articles, toggleLargeMode}) => {
   useEffect(() => {
     const handleKeyDown = e => {
       if (e.code === 'Escape') {
-        toggle();
+        toggleLargeMode();
       }
-    };
+    };  
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [toggle]);
+  }, [toggleLargeMode]);
  
  
   const handleBackdropClick = event => {
     if (event.currentTarget === event.target) {
-      toggle();
+      toggleLargeMode();
     }
   };
 
@@ -32,3 +33,8 @@ const Modal = (articles, toggle) => {
 }
 
 export default Modal;
+
+Modal.propTypes = {
+  articles: PropTypes.string.isRequired,
+  toggleLargeMode: PropTypes.func.isRequired,
+};
