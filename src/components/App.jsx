@@ -21,12 +21,10 @@ const App = () => {
   useEffect(() => {
     (async function (prevQuery) {
       try {
-        setShowBtn(false);
         setIsLoading(true);
         setError(false);
         const { hits } = await fetchImages(query, page);
         if (!hits.length) {
-          setArticles([]);
           setError(true);
           return;
         }
@@ -55,8 +53,8 @@ const App = () => {
   }, [page, query]);
 
   const setQuerys = value => {
+    setArticles([]);
     setQuery(value);
-    setShowBtn(false);
     setPage(1);
   };
 
@@ -79,9 +77,7 @@ const App = () => {
       <ArticleList articles={articles} toggleLargeMode={toggleLargeMode} />
       {showBtn && (
         <Button
-          onClick={e => {
-            handleLoadMore();
-          }}
+          onClick={handleLoadMore}
         />
       )}
       {showLargePic && (
